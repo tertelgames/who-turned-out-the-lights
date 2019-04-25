@@ -1,6 +1,10 @@
+const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
+    mode: 'development',
+    entry: './src/index.ts',
+    devtool: 'inline-source-map',
     module: {
         rules: [
             {
@@ -8,11 +12,43 @@ module.exports = {
                 use: [
                     {
                         loader: 'html-loader',
-                        options: { minimize: true }
+                        options: { 
+                            minimize: true,
+                            
+                        }
+                    }
+                ]
+            },
+            {
+                test: /\.tsx?$/,
+                use: [
+                    {
+                        loader: 'ts-loader',
+                        options: {}
+                    }
+                ],
+                exclude: /node_modules/
+            },
+            {
+                test: /\.(png|jpe?g|gif)$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name: '[name].[ext]',
+                            outputPath: 'images'
+                        }
                     }
                 ]
             }
         ]
+    },
+    output: {
+        filename: 'bundle.js',
+        path: path.resolve(__dirname, 'dist')
+    },
+    resolve: {
+        extensions: ['.ts', '.tsx', '.js']
     },
     plugins: [
         new HtmlWebpackPlugin({

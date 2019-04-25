@@ -4,11 +4,13 @@ Who Turned Out The Lights?
 A game about a kid on a quest to turn the lights back on.
 It's dark and scary in the house, and it's a maze just to walk around.
 
-Main Character:
-    Terry Lumenfeld
+Main Character: "Terry Lumenfeld"
     A kid who just wants the lights back on.
+    Notes:
+        - Afraid of the dark
 
-Main Enemy:
-    Lumbers
+Main Enemy: "Lumbers"
     They're like shadows, but not. They want to keep the lights off.
     Terry beats them with a pipe wrench.
+
+
