@@ -45,3 +45,4 @@ export * from './engine/Entity';
 export * from './engine/Canvas';
 export * from './engine/Component';
 export * from './engine/Collision';
+export * from './engine/Thing';

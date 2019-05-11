@@ -1,9 +1,6 @@
-import { Entity } from './Engine';
+import { Player, Background } from './things/index';
 
-export default class Hierarchy {
-    public entities:Entity[] = [];
-    constructor(){
-
-    }
-
-};
+export default [ 
+    new Background(),
+    new Player()
+];
