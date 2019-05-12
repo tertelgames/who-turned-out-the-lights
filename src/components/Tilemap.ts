@@ -1,5 +1,5 @@
 import { 
-    Box, Vector, Component, Canvas, Entity
+    Box, Vector,  Canvas, Entity
 }  from '../Engine';
 
 import { Collider, Sprite } from '../Components';
@@ -36,22 +36,21 @@ function getLeastRects(layer:number[], layerWidth:number):Box[]{
     return rects;
 }
 
-export class Tilemap implements Component{
+export class Tilemap {
     public width:number;
     public height:number;
     public tile_dimensions:Vector;
 
     public layers:number[][];
 
-    private _entity:Entity;
-
     public sprite:Sprite;
 
-    constructor(map:any, entity?:Entity){
+    constructor(map:any){
         this.width = map.width;
         this.height = map.height;
-
-        if(entity) this._entity = entity;
+        this.tile_dimensions = new Vector(
+            map.tilewidth, map.tileheight
+        );
 
         for(let layer of map.layers) this.layers.push(layer.data);
     }
@@ -60,13 +59,8 @@ export class Tilemap implements Component{
         this.sprite.render(canvas, new Box([0, 0, this.width, this.height]));
     }
 
-    get entity(){
-        return this._entity;
-    }
-
     static solidifyLayer(map: Tilemap, layerIndex:number){
         let layer:number[] = map.layers[layerIndex];
         let rects:Box[] = getLeastRects(layer, map.width);
-        let collider:Collider = <Collider> map.entity.getComponent("Collider");
     }
 }

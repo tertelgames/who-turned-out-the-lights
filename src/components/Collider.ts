@@ -1,22 +1,19 @@
-import { Box, Entity, Collision, Component } from '../Engine';
+import { Box, Entity, Collision, Vector } from '../Engine';
 
-export class Collider implements Component{
-    public bounds: Box;
-    private _entity: Entity;
-    constructor(bounds: Box, entity: Entity){
-        this.bounds = bounds;
-        this._entity = entity;
+export class Collider{
+    public size:Vector
+    private entity: Entity;
+    constructor(size:Vector, entity: Entity){
+        this.size = size;
+        this.entity = entity;
     }
     update(){
         for(let other of Entity.list){
-            if(Box.overlap(other.box, this.entity.box)){
+            if(Box.overlap(other.bounds, this.entity.bounds)){
                 this.entity.setCollision(new Collision(
                     this.entity, other
                 ));
             }
         }
-    }
-    get entity(){
-        return this._entity;
     }
 }

@@ -1,20 +1,18 @@
-import { Box, Component, Entity, Canvas } from '../Engine';
+import { Box, Entity, Canvas } from '../Engine';
 
-export class Sprite implements Component{
+export class Sprite {
     private img:HTMLCanvasElement;
     private revImg:HTMLCanvasElement;
 
     private rawImage:HTMLImageElement;
 
-    private _entity:Entity;
     private _loaded:boolean;
 
     public onload:Function;
 
     public sprite:Sprite;
 
-    constructor(url:string, entity:Entity = null){
-        this._entity = entity;
+    constructor(url:string){
         this.rawImage = new Image();
         this.rawImage.onload = this.rawImageOnload.bind(this);
         this.rawImage.src = url;
@@ -45,8 +43,5 @@ export class Sprite implements Component{
 
     get loaded():boolean{
         return this._loaded;
-    }
-    get entity():Entity{
-        return this._entity;
     }
 }
