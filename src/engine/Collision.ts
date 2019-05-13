@@ -1,14 +1,12 @@
-import { Box, Entity } from '../Engine';
+import { Entity } from '../Engine';
 
-export  class Collision{
-    public main: Entity;
-    public other: Entity;
-
-    public enter:boolean;
+export class Collision{
+    public id:number;
+    public entity:Entity;
     public exit:boolean;
-
-    constructor(main:Entity, other:Entity){
-        this.main = main;
-        this.other = other;
+    public enter:boolean;
+    constructor(entity:Entity){
+        this.id = entity.id;
+        this.entity = entity;
     }
 }

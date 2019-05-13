@@ -1,6 +1,9 @@
-import { Player, Background } from './things/index';
+import Player from './things/Player';
+import Background from './things/Background';
 
 export default [ 
-    new Background(),
-    new Player()
+    () => {
+        new Background();
+        new Player();
+    }
 ];

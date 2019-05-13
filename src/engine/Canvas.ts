@@ -6,6 +6,7 @@ export class Canvas{
     private x:number = 0;
     private y:number = 0;
 
+    public background:string = 'white';
 
     constructor([w, h]: number[]){
         this._canvas = <HTMLCanvasElement> document.createElement('canvas');
@@ -21,6 +22,12 @@ export class Canvas{
 
     rectangle([x, y, width, height]:number[]){
         this.ctx.fillRect(x, y, width, height);
+    }
+    drawBackground(){
+        this.ctx.save();
+        this.ctx.fillStyle = this.background;
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.restore();
     }
     clear(){
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);

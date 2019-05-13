@@ -10,6 +10,9 @@ export class Vector{
             this.y / Math.abs(this.y)
         );
     };
+    static get zero(){
+        return new Vector(0, 0);
+    }
 }
 
 export class Box{
@@ -43,6 +46,5 @@ export class Box{
 
 export * from './engine/Entity';
 export * from './engine/Canvas';
-export * from './engine/Component';
 export * from './engine/Collision';
-export * from './engine/Thing';
+export * from './engine/Input';

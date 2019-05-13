@@ -1,5 +1,3 @@
-import { Thing } from '../Engine';
-
-export class Background extends Thing {
+export default class Background {
 
 }

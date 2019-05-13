@@ -1,4 +1,6 @@
-import { Canvas, Entity } from './Engine';
+import { Canvas, Entity, Input } from './Engine';
+import GameObject from './GameObject';
+import Hierarchy from './Hierarchy';
 
 export default class Game{
     private framerate:number;
@@ -7,21 +9,22 @@ export default class Game{
 
     constructor(){
         this.framerate = 1000 / 60;
-        this.running = true;
         this._canvas = new Canvas([768, 480]);
 
-        this.update();
-        this.render();
+        this.start();
     }
 
     render(){
         this.canvas.clear();
+        this.canvas.drawBackground();
         Entity.Render(this.canvas);
         if(this.running) requestAnimationFrame(this.render.bind(this));
     }
 
     update(){
         Entity.Update();
+        GameObject.update();
+        Input.clear();
         if(this.running) setTimeout(this.update.bind(this), this.framerate);
     }
 
@@ -29,6 +32,8 @@ export default class Game{
         this.running = true;
         this.update();
         this.render();
+        Hierarchy[0]();
+        console.log(Entity.list);
     }
 
     stop(){

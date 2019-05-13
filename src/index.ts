@@ -5,3 +5,4 @@ import './images/test.jpg';
 
 let game = new Game();
 
+game.canvas.background = '#bbb';

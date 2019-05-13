@@ -1,9 +1,8 @@
-import { Vector, Box, Collision, Canvas } from '../Engine';
+import { Vector, Box, Canvas, Collision } from '../Engine';
 import { Sprite, Tilemap, Collider } from '../Components';
 
 
 let entities: Entity[] = [];
-
 
 
 /*---------------------------
@@ -16,16 +15,13 @@ export class Entity{
     private width:number; 
     private height:number;
 
-    public uuid:number;
+    public id:number;
 
-    private isStatic:boolean;
-    private isDynamic:boolean;
-    private isKinematic:boolean;
+    private type:string;
 
     // stores velocity vector
     public velocity:Vector = new Vector(0, 0);
 
-    private collision: Collision;
     private collider:Collider;
 
     private onCollisionEnters:Function[];
@@ -40,6 +36,7 @@ export class Entity{
         this.width = width;
         this.height = height;
 
+        this.type = options.type || 'static';
 
         let colliderSize:Vector;
         if(options.bounds){
@@ -52,7 +49,7 @@ export class Entity{
             this.collider = new Collider(colliderSize, this);
         }
 
-        this.uuid = Math.random();
+        this.id = Math.random();
         entities.push(this);
     }
 
@@ -62,7 +59,9 @@ export class Entity{
         this.x += this.velocity.x;
         this.y += this.velocity.y;
 
-        if(this.collision) this.handleCollision();
+        for(let collision of this.collider.getCollisions()){
+            this.handleCollision(collision);
+        }
     };
 
     // renders entity based on position and dimension data
@@ -81,10 +80,27 @@ export class Entity{
 
 
     // runs collision detector and corrects position if colliding
-    private handleCollision(){
+    private handleCollision(collision:Collision){
+        if(collision.exit){
+            for(let fn of this.onCollisionExits){
+                fn(collision);
+            }
+            return;
+        }
+        if(collision.enter){
+            for(let fn of this.onCollisionEnters){
+                fn(collision);
+            }
+        }
+        for(let fn of this.onCollisions){
+            fn(collision);
+        }
 
 
-        let other = this.collision.other;
+        if(this.type != 'dynamic') return;
+        if(collision.entity.type != 'static') return;
+
+        let other = collision.entity;
         let norm_vel = this.velocity.normalized;
 
         if(norm_vel.x == -1) this.x = other.x - this.width;
@@ -93,10 +109,6 @@ export class Entity{
         if(norm_vel.y ==  1) this.y = other.y + other.height;
     };
 
-
-    setCollision(collision:Collision){
-        this.collision = collision;
-    }
 
     onCollisionEnter(fn:Function){
         this.onCollisionEnters.push(fn);
@@ -110,7 +122,7 @@ export class Entity{
 
     destroy(){
         for(let i in entities){
-            if(entities[i].uuid == this.uuid){
+            if(entities[i].id == this.id){
                 delete entities[i];
             }
         }
@@ -144,6 +156,16 @@ export class Entity{
             this.collider.size.x, 
             this.collider.size.y
         );
+    }
+
+    get isStatic():boolean{
+        return (this.type == 'static');
+    }
+    get isKinematic():boolean{
+        return (this.type == 'kinematic');
+    }
+    get isDynamic():boolean{
+        return (this.type == 'dynamic');
     }
 
     static Update(){
