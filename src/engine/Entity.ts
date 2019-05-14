@@ -16,6 +16,7 @@ export class Entity{
     private height:number;
 
     public id:number;
+    public tag:string;
 
     private type:string;
 
@@ -24,9 +25,9 @@ export class Entity{
 
     private collider:Collider;
 
-    private onCollisionEnters:Function[];
-    private onCollisionExits:Function[];
-    private onCollisions:Function[];
+    private onCollisionEnters:Function[] = [];
+    private onCollisionExits:Function[]  = [];
+    private onCollisions:Function[]      = [];
 
     public sprite:Sprite;
 
@@ -37,8 +38,10 @@ export class Entity{
         this.height = height;
 
         this.type = options.type || 'static';
+        this.tag = options.tag || Math.random().toString();
 
         let colliderSize:Vector;
+
         if(options.bounds){
             colliderSize = options.bounds;
         }
@@ -58,6 +61,8 @@ export class Entity{
     private update(){
         this.x += this.velocity.x;
         this.y += this.velocity.y;
+
+        this.collider.update();
 
         for(let collision of this.collider.getCollisions()){
             this.handleCollision(collision);
@@ -81,6 +86,7 @@ export class Entity{
 
     // runs collision detector and corrects position if colliding
     private handleCollision(collision:Collision){
+        console.log("Handling collision");
         if(collision.exit){
             for(let fn of this.onCollisionExits){
                 fn(collision);
@@ -128,6 +134,11 @@ export class Entity{
         }
     }
 
+    setPosition(x: number, y: number){
+        this.x = x;
+        this.y = y;
+    }
+
     get box():Box{
         return new Box([
             this.x, this.y, this.width, this.height
@@ -135,8 +146,8 @@ export class Entity{
     }
     get bounds():Box{
         return new Box([
-            (this.x + this.width) / 2 - this.collider.size.x / 2,
-            (this.y + this.height) / 2 - this.collider.size.y / 2,
+            this.x + this.width / 2 - this.collider.size.x / 2,
+            this.y + this.height / 2 - this.collider.size.y / 2,
             this.collider.size.x,
             this.collider.size.y
         ]);

@@ -34,10 +34,10 @@ export class Box{
         ]
     }
     static overlap(box1: Box, box2: Box): boolean{
-        if(    ( box1.x + box1.width > box2.x  )
-            && ( box1.x < box2.x + box2.width  )
-            && ( box1.y + box1.height > box2.y )
-            && ( box1.y < box2.y + box2.height )){
+        if(( box1.x + box1.width > box2.x  )
+         &&( box1.x < box2.x + box2.width  )
+         &&( box1.y + box1.height > box2.y )
+         &&( box1.y < box2.y + box2.height )){
             return true;
         }
         else return false;

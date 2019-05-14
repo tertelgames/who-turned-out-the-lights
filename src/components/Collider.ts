@@ -15,7 +15,7 @@ export class Collider{
     update(){
         for(let i in this.collisions){
             if(this.collisions[i].exit){
-                delete this.collisions[i];
+                this.collisions.splice(Number(i));
                 break;
             }
             if(this.collisions[i].enter){
@@ -23,6 +23,7 @@ export class Collider{
             }
         }
         for(let other of Entity.list){
+            if(other.id == this.entity.id) continue;
             let collision = this.getCollision(other.id);
             if(Box.overlap(other.bounds, this.entity.bounds)){
                 if(!collision){

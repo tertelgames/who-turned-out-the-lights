@@ -7,7 +7,8 @@ export default class Player extends GameObject {
     constructor(){
         super();
         this.entity = new Entity([50, 50, 32, 32], {
-            type: 'dynamic'
+            type: 'dynamic',
+            tag: 'player'
         });
     }
     update(){
