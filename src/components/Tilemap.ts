@@ -5,67 +5,85 @@ import {
 import { Collider, Sprite } from '../Components';
 
 interface RawLayer{
-    data:number[];
-    width:number;
-    height:number;
-    id:number;
-    visible:boolean;
 }
 
-interface Layer{
-    rows:number[][];
-    cols:number[][];
-}
-
-function reduceLayerData(raw_layer:RawLayer):Layer{
-    let layer:Layer = {
-        rows: [],
-        cols: []
-    };
-    while(layer.rows.length < raw_layer.height){
-        layer.rows.push(raw_layer.data.slice(
-            layer.rows.length * raw_layer.width,
-            (layer.rows.length + 1) * raw_layer.width
-        ));
+class Layer{
+    public data:number[];
+    public width:number;
+    public height:number;
+    public id:number;
+    public visible:boolean;
+    public rows:number[][];
+    constructor(
+        data:number[],
+        width:number,
+        height:number,
+        id:number,
+        visible:boolean
+    ){
+        while(this.rows.length < height){
+            this.rows.push(data.slice(
+                this.rows.length * width,
+                (this.rows.length + 1) * width
+            ));
+        }
+        this.data = data;
+        this.width = width;
+        this.height = height;
+        this.id = id;
+        this.visible = visible;
     }
-    while(layer.cols.length < raw_layer.width){
-        layer.cols.push([]);
-        layer.rows[layer.cols.length - 1].forEach((tile) => {
-            layer.cols[layer.cols.length - 1].push(tile);
-        });
-    }
-    return layer;
 }
 
-function getRect(layer:Layer, row:number, col:number):Box{
+function rowIsFull(
+    layer:Layer, 
+    width:number, height: number, 
+    x:number, y:number
+){
+    let row = layer.rows[y + height].slice(x, x + width); 
+    return !row.includes(0);
+}
+
+function getRect(layer:Layer, x:number, y:number):Box{
     let rect:Box = new Box([0, 0, 0, 0]);
 
-    for(rect.width = 0; layer.rows[row][col] !== 0; rect.width++);
+    for(rect.width = 0; layer.rows[y][x] !== 0; rect.width++);
+    while(rowIsFull(layer, rect.width, rect.height, x, y)) rect.height ++;
 
     return rect;
 }
 
-function getLeastRects(raw_layer:RawLayer):Box[]{
+function checkTiles(layer:Layer, box:Box){
+    for(let y = box.y; y < box.y + box.height; y++){
+        for(let x = box.x; x < box.x + box.width; x++){
+            layer.rows[y][x] = 0;
+        }
+    }
+}
+
+function getLeastRects(layer:Layer):Box[]{
     let boxes:Box[] = [];
 
-    let checkedTiles:{[key:string]:boolean} = {};
-    
-    let layer = reduceLayerData(raw_layer);
     layer.rows.forEach((row, y) => {
         row.forEach((tile, x) => {
-
+            if(tile === 0) return;
+            let box:Box = getRect(layer, x, y);
+            checkTiles(layer, box);
+            boxes.push(box);
         });
     });
 
     return boxes;
 }
 
+
+
 export class Tilemap {
     public width:number;
     public height:number;
     public tile_dimensions:Vector;
 
-    public layers:RawLayer[];
+    public layers:Layer[];
 
     public sprite:Sprite;
 
@@ -77,13 +95,13 @@ export class Tilemap {
         );
 
         this.layers = map.layers.map((layer:any) => {
-            return {
-                data    : layer.data,
-                width   : layer.width,
-                height  : layer.height,
-                id      : layer.id,
-                visible : layer.visible
-            };
+            return new Layer( 
+                layer.data,
+                layer.width,
+                layer.height,
+                layer.id,
+                layer.visible
+            );
         });
     }
 
@@ -92,7 +110,13 @@ export class Tilemap {
     }
 
     static solidifyLayer(map: Tilemap, layerIndex:number){
-        let layer:RawLayer = map.layers[layerIndex];
+        let layer:Layer = map.layers.slice()[layerIndex];
         let rects:Box[] = getLeastRects(layer);
+        rects.forEach((box) => {
+            new Entity(box.list, {
+                tag: 'tile',
+                type: 'static'
+            });
+        });
     }
 }
