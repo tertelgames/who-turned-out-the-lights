@@ -7,15 +7,13 @@ export default class Collectable extends GameObject {
     constructor(){
         super();
         this.entity = new Entity([50, 50, 16, 16], {type: 'kinematic'});
-        this.entity.onCollisionEnter(this.relocate.bind(this));
+        this.entity.onCollisionExit(this.relocate.bind(this));
     }
     private relocate(col:Collision){
-        console.log("Enter");
         if(col.tag != "player") return;
         this.entity.setPosition(
             Math.floor(Math.random() * Game.canvas.width),
             Math.floor(Math.random() * Game.canvas.height),
         );
-        console.log(this.entity.position);
     }
 };

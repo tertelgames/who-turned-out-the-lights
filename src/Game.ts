@@ -26,7 +26,6 @@ let Game = {
         this.update();
         this.render();
         Hierarchy[0]();
-        console.log(Entity.list);
     },
 
     stop(){

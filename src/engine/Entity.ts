@@ -86,7 +86,6 @@ export class Entity{
 
     // runs collision detector and corrects position if colliding
     private handleCollision(collision:Collision){
-        console.log("Handling collision");
         if(collision.exit){
             for(let fn of this.onCollisionExits){
                 fn(collision);

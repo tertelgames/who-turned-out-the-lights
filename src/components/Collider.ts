@@ -30,10 +30,9 @@ export class Collider{
                     collision = new Collision(other);
                     collision.enter = true;
                     this.collisions.push(collision);
-                    continue;
                 }
             }
-            if(collision) collision.exit = true;
+            else if(collision) collision.exit = true;
         }
     }
 
