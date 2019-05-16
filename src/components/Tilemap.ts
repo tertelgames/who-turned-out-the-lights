@@ -4,36 +4,60 @@ import {
 
 import { Collider, Sprite } from '../Components';
 
+interface RawLayer{
+    data:number[];
+    width:number;
+    height:number;
+    id:number;
+    visible:boolean;
+}
 
-function getLeastRects(layer:number[], layerWidth:number):Box[]{
-    let rects:Box[] = [];
-    let checkedTiles:any = {};
-    for(let stringIndex in layer){
-        let index = <number><any>stringIndex;
-        if(!layer[index]) continue;
-        if(checkedTiles[index]) continue;
-        let x:number = index % layerWidth;
-        let y:number = Math.floor(index / layerWidth);
-        let width:number = 0;
-        let height:number = 0;
-        for(let col = index; layer[col]; col++){
-            if(col % layerWidth === 0) break;
-            checkedTiles[col] = true;
-            width++;
-        }
-        for(let rowStart = index; layer[rowStart]; rowStart += layerWidth){
-            let row:number[] = layer.slice(rowStart, rowStart + width);
-            //@ts-ignore
-            if(row.includes(0)) break;
-            for(let i of row) checkedTiles[i + rowStart] = true;
-            break;
-        }
+interface Layer{
+    rows:number[][];
+    cols:number[][];
+}
 
-        rects.push(new Box([
-            x, y, width, height
-        ]));
+function reduceLayerData(raw_layer:RawLayer):Layer{
+    let layer:Layer = {
+        rows: [],
+        cols: []
+    };
+    while(layer.rows.length < raw_layer.height){
+        layer.rows.push(raw_layer.data.slice(
+            layer.rows.length * raw_layer.width,
+            (layer.rows.length + 1) * raw_layer.width
+        ));
     }
-    return rects;
+    while(layer.cols.length < raw_layer.width){
+        layer.cols.push([]);
+        layer.rows[layer.cols.length - 1].forEach((tile) => {
+            layer.cols[layer.cols.length - 1].push(tile);
+        });
+    }
+    return layer;
+}
+
+function getRect(layer:Layer, row:number, col:number):Box{
+    let rect:Box = new Box([0, 0, 0, 0]);
+
+    for(rect.width = 0; layer.rows[row][col] !== 0; rect.width++);
+
+    return rect;
+}
+
+function getLeastRects(raw_layer:RawLayer):Box[]{
+    let boxes:Box[] = [];
+
+    let checkedTiles:{[key:string]:boolean} = {};
+    
+    let layer = reduceLayerData(raw_layer);
+    layer.rows.forEach((row, y) => {
+        row.forEach((tile, x) => {
+
+        });
+    });
+
+    return boxes;
 }
 
 export class Tilemap {
@@ -41,7 +65,7 @@ export class Tilemap {
     public height:number;
     public tile_dimensions:Vector;
 
-    public layers:number[][];
+    public layers:RawLayer[];
 
     public sprite:Sprite;
 
@@ -52,7 +76,15 @@ export class Tilemap {
             map.tilewidth, map.tileheight
         );
 
-        for(let layer of map.layers) this.layers.push(layer.data);
+        this.layers = map.layers.map((layer:any) => {
+            return {
+                data    : layer.data,
+                width   : layer.width,
+                height  : layer.height,
+                id      : layer.id,
+                visible : layer.visible
+            };
+        });
     }
 
     render(canvas:Canvas){
@@ -60,7 +92,7 @@ export class Tilemap {
     }
 
     static solidifyLayer(map: Tilemap, layerIndex:number){
-        let layer:number[] = map.layers[layerIndex];
-        let rects:Box[] = getLeastRects(layer, map.width);
+        let layer:RawLayer = map.layers[layerIndex];
+        let rects:Box[] = getLeastRects(layer);
     }
 }
