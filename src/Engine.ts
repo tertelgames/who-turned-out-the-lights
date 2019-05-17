@@ -48,3 +48,4 @@ export * from './engine/Entity';
 export * from './engine/Canvas';
 export * from './engine/Collision';
 export * from './engine/Input';
+export * from './engine/Component';

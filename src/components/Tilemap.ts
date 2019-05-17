@@ -1,5 +1,5 @@
 import { 
-    Box, Vector,  Canvas, Entity
+    Box, Vector,  Canvas, Entity, Component
 }  from '../Engine';
 
 import { Collider, Sprite } from '../Components';

@@ -1,16 +1,23 @@
-let list:GameObject[] = [];
+import { Canvas } from './Engine';
+import Hierarchy from './Hierarchy';
 
 export default class GameObject{
+    private id: number;
     constructor(){
-        list.push(this);
+        this.id = Math.random();
+        Hierarchy.add(this);
     }
     update(){
 
     }
-    static get list(){
-        return list;
+    render(canvas:Canvas){
+
     }
-    static update(){
-        for(let gameObject of this.list) gameObject.update();
+    destroy(){
+        Hierarchy.destroy(this.id);
+    }
+
+    getId():number{
+        return this.id;
     }
 }

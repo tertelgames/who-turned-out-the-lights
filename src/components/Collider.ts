@@ -1,7 +1,7 @@
-import { Box, Entity, Vector, Collision } from '../Engine';
+import { Box, Entity, Vector, Collision, Component } from '../Engine';
 
 
-export class Collider{
+export class Collider {
     public size:Vector
     private entity: Entity;
 

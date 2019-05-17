@@ -16,7 +16,7 @@ let Game = {
 
     update(){
         Entity.Update();
-        GameObject.update();
+        Hierarchy.Update();
         Input.clear();
         if(running) setTimeout(this.update.bind(this), framerate);
     },

@@ -1,4 +1,4 @@
-import { Box, Entity, Canvas } from '../Engine';
+import { Box, Entity, Canvas, Component } from '../Engine';
 
 export class Sprite {
     private img:HTMLCanvasElement;
