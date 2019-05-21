@@ -6,5 +6,6 @@ export default class Background extends GameObject {
     constructor(){
         super();
         let tilemap = new Tilemap(map);
+        Tilemap.solidifyLayer(tilemap, 0);
     }
 }

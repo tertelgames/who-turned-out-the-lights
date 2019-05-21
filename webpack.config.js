@@ -57,8 +57,6 @@ module.exports = {
         })
     ],
     devServer: {
-        port: 8080,
-        public: 'tertelgames.com/light-dev/sockjs-node',
-        disableHostCheck: true
+        port: 8080
     }
 };

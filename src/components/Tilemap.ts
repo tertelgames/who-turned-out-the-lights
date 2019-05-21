@@ -13,7 +13,7 @@ class Layer{
     public height:number;
     public id:number;
     public visible:boolean;
-    public rows:number[][];
+    public rows:number[][] = [];
     constructor(
         data:number[],
         width:number,
