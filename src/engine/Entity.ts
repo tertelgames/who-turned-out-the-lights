@@ -15,6 +15,8 @@ export class Entity{
     private width:number; 
     private height:number;
 
+    private lastPosition:Vector;
+
     public id:number;
     public tag:string;
 
@@ -59,6 +61,10 @@ export class Entity{
 
     // updates position based on velocity or collision data
     private update(){
+        if(this.isStatic) return;
+
+        this.lastPosition = new Vector(this.x, this.y);
+
         this.x += this.velocity.x;
         this.y += this.velocity.y;
 
@@ -78,8 +84,8 @@ export class Entity{
         }
 
         canvas.ctx.save();
-        canvas.ctx.fillStyle = 'black';
-        canvas.rectangle(this.box.list);
+        canvas.ctx.strokeStyle = 'black';
+        canvas.ctx.strokeRect(...this.box.list);
         canvas.ctx.restore();
     };
 
@@ -102,17 +108,62 @@ export class Entity{
         }
 
 
+
         if(this.type != 'dynamic') return;
         if(collision.entity.type != 'static') return;
 
-        let other = collision.entity;
-        let norm_vel = this.velocity.normalized;
+        let other = collision.entity.bounds;
+        // let norm_vel = this.velocity.normalized;
+        // console.log(norm_vel);
 
-        if(norm_vel.x == -1) this.x = other.x - this.width;
-        if(norm_vel.y == -1) this.y = other.y - this.height;
-        if(norm_vel.x ==  1) this.x = other.x + other.width;
-        if(norm_vel.y ==  1) this.y = other.y + other.height;
-    };
+        // if(norm_vel.x == -1){
+        //     this.x = other.x + other.width;
+        //     this.velocity.x = 0;
+        // }
+        // if(norm_vel.y == -1){
+        //     this.y = other.y + other.height;
+        //     this.velocity.y = 0;
+        // }
+        // if(norm_vel.x ==  1){
+        //     this.x = other.x - this.width;
+        //     this.velocity.x = 0;
+        // }
+        // if(norm_vel.y ==  1){
+        //     this.y = other.y - this.height;
+        //     this.velocity.y = 0;
+        // }
+
+        let last_x = this.lastPosition.x; 
+        let last_y = this.lastPosition.y;
+
+        console.log(this.lastPosition);
+
+        if( last_y + this.height > other.y && 
+        last_y < other.y + other.height ){
+            this.correct_x(last_x, other);
+        }
+        else if( last_x + this.width > other.x && 
+        last_x < other.x + other.width ){
+            this.correct_y(last_y, other);
+        }
+    }
+
+    private correct_x(last_x:number, other:Box){
+        if( last_x + this.width < other.x ){
+            this.x = other.x - this.width;
+        }
+        else if( last_x > other.x + other.width ) {
+            this.x = other.x + other.width;
+        }
+    }
+    private correct_y(last_y:number, other:Box){
+        if( last_y + this.height < other.y ){
+            this.y = other.y - this.height;
+        }
+        else if( last_y > other.y + other.height ) {
+            this.y = other.y + other.height;
+        }
+    }
 
 
     onCollisionEnter(fn:Function){
@@ -144,6 +195,7 @@ export class Entity{
         ]);
     }
     get bounds():Box{
+        if(this.isStatic) return this.box;
         return new Box([
             this.x + this.width / 2 - this.collider.size.x / 2,
             this.y + this.height / 2 - this.collider.size.y / 2,

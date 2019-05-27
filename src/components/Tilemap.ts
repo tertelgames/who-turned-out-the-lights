@@ -4,9 +4,6 @@ import {
 
 import { Collider, Sprite } from '../Components';
 
-interface RawLayer{
-}
-
 class Layer{
     public data:number[];
     public width:number;
@@ -37,18 +34,25 @@ class Layer{
 
 function rowIsFull(
     layer:Layer, 
+    x:number, y:number,
     width:number, height: number, 
-    x:number, y:number
 ){
     let row = layer.rows[y + height].slice(x, x + width); 
+    console.log("working");
     return !row.includes(0);
 }
 
 function getRect(layer:Layer, x:number, y:number):Box{
-    let rect:Box = new Box([0, 0, 0, 0]);
+    let rect:Box = new Box([x, y, 0, 0]);
 
-    for(rect.width = 0; layer.rows[y][x] !== 0; rect.width++);
-    while(rowIsFull(layer, rect.width, rect.height, x, y)) rect.height ++;
+
+    while(layer.rows[y][x + rect.width]){
+        rect.width++;
+    }
+    while(rowIsFull(layer, x, y, rect.width, rect.height)){
+        rect.height ++;
+        if(y + rect.height >= layer.rows.length) break;
+    }
 
     return rect;
 }
@@ -112,8 +116,14 @@ export class Tilemap {
     static solidifyLayer(map: Tilemap, layerIndex:number){
         let layer:Layer = map.layers.slice()[layerIndex];
         let rects:Box[] = getLeastRects(layer);
+        console.log(rects);
         rects.forEach((box) => {
-            new Entity(box.list, {
+            new Entity([
+                box.x * map.tile_dimensions.x,
+                box.y * map.tile_dimensions.y,
+                box.width * map.tile_dimensions.x,
+                box.height * map.tile_dimensions.y
+            ], {
                 tag: 'tile',
                 type: 'static'
             });

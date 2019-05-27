@@ -5,10 +5,15 @@ export class Vector{
         this.x = x; this.y = y;
     }
     get normalized():Vector{
-        return new Vector(
-            this.x / Math.abs(this.x),
-            this.y / Math.abs(this.y)
-        );
+        let x = 0;
+        if(this.x > 0) x = 1;
+        if(this.x < 0) x = -1;
+
+        let y = 0;
+        if(this.y > 0) y = 1;
+        if(this.y < 0) y = -1;
+
+        return new Vector(x, y);
     };
     static get zero(){
         return new Vector(0, 0);
