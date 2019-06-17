@@ -33,19 +33,26 @@ export class Box{
         this.height = height;
     }
 
+    get right():number{
+        return this.x + this.width;
+    }
+    get bottom():number{
+        return this.y + this.height;
+    }
+
     get list():[number, number, number, number]{
         return [
             this.x, this.y, this.width, this.height
         ]
     }
+
     static overlap(box1: Box, box2: Box): boolean{
-        if(( box1.x + box1.width > box2.x  )
-         &&( box1.x < box2.x + box2.width  )
-         &&( box1.y + box1.height > box2.y )
-         &&( box1.y < box2.y + box2.height )){
-            return true;
+        if( box1.right < box2.x  || box1.x > box2.right ||
+            box1.bottom < box2.y || box1.y > box2.bottom )
+        {
+            return false;
         }
-        else return false;
+        else return true;
     }
 }
 

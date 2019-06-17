@@ -1,6 +1,10 @@
 import { Box, Entity, Vector, Collision, Component } from '../Engine';
 
 
+function getCollision():Collision{
+
+}
+
 export class Collider {
     public size:Vector
     private entity: Entity;

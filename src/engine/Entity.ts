@@ -10,10 +10,8 @@ let entities: Entity[] = [];
 ---------------------------*/
 export class Entity{
     //dimensional information
-    private x:number; 
-    private y:number; 
-    private width:number; 
-    private height:number;
+    
+    public box:Box;
 
     private lastPosition:Vector;
 
@@ -33,11 +31,8 @@ export class Entity{
 
     public sprite:Sprite;
 
-    constructor([x, y, width, height]: number[], options: any){
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
+    constructor(box:Box, options: any){
+        this.box = box || new Box([0, 0, 32, 32]);
 
         this.type = options.type || 'static';
         this.tag = options.tag || Math.random().toString();
@@ -136,8 +131,6 @@ export class Entity{
         let last_x = this.lastPosition.x; 
         let last_y = this.lastPosition.y;
 
-        console.log(this.lastPosition);
-
         if( last_y + this.height > other.y && 
         last_y < other.y + other.height ){
             this.correct_x(last_x, other);
@@ -149,6 +142,7 @@ export class Entity{
     }
 
     private correct_x(last_x:number, other:Box){
+        console.log("correcting x");
         if( last_x + this.width < other.x ){
             this.x = other.x - this.width;
         }
@@ -189,11 +183,6 @@ export class Entity{
         this.y = y;
     }
 
-    get box():Box{
-        return new Box([
-            this.x, this.y, this.width, this.height
-        ]);
-    }
     get bounds():Box{
         if(this.isStatic) return this.box;
         return new Box([

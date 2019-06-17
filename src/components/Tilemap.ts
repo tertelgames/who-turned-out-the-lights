@@ -38,7 +38,6 @@ function rowIsFull(
     width:number, height: number, 
 ){
     let row = layer.rows[y + height].slice(x, x + width); 
-    console.log("working");
     return !row.includes(0);
 }
 
@@ -116,7 +115,6 @@ export class Tilemap {
     static solidifyLayer(map: Tilemap, layerIndex:number){
         let layer:Layer = map.layers.slice()[layerIndex];
         let rects:Box[] = getLeastRects(layer);
-        console.log(rects);
         rects.forEach((box) => {
             new Entity([
                 box.x * map.tile_dimensions.x,
