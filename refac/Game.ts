@@ -1,22 +1,19 @@
 //Game.ts
 
 import Entity from './Entity';
-
-type Updatable = {
-    update();
-}
-type Renderable = {
-    render();
-}
+import Canvas from './Canvas';
+import Input from './Input';
 
 
-class Game {
+export default class Game {
+    readonly canvas:Canvas;
+
     private running:boolean;
 
     public updateRate:number = 1000 / 30;
 
-    constructor() {
-        this.Start();
+    constructor(canvas:Canvas) {
+        this.canvas = canvas;
     }
 
 
@@ -35,8 +32,13 @@ class Game {
         if (this.running) {
             setTimeout(this.Update.bind(this), this.updateRate);
         }
+
+        Input.clear();
     }
     Render() {
+        this.canvas.clear();
+        this.canvas.drawBackground();
+
         Entity.Render();
 
         if (this.running) {
@@ -44,7 +46,3 @@ class Game {
         }
     }
 };
-
-let game = new Game();
-
-export default game;

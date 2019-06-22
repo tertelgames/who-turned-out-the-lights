@@ -40,5 +40,4 @@ export default class Box {
             this.y + this.h
         ];
     }
-
 }

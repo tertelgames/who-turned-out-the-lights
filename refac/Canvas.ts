@@ -1,34 +1,33 @@
+import Draw from './Draw';
+
 export default class Canvas{
-    private _canvas:HTMLCanvasElement;
-    public  _ctx:CanvasRenderingContext2D;
+    readonly canvas:HTMLCanvasElement;
+    readonly ctx:CanvasRenderingContext2D;
+    readonly draw:Draw;
     private x:number = 0;
     private y:number = 0;
 
-    public background:string = 'white';
+    private background:string = 'white';
 
-    constructor([w, h]: number[]){
-        this._canvas = <HTMLCanvasElement> document.createElement('canvas');
+    constructor(w:number, h:number){
+        this.canvas = <HTMLCanvasElement> document.createElement('canvas');
 
-        this._canvas.width  = w;
-        this._canvas.height = h;
+        this.canvas.width  = w;
+        this.canvas.height = h;
 
-        document.body.insertBefore(this._canvas, null);
+        document.body.insertBefore(this.canvas, null);
 
-        this._ctx = this.canvas.getContext('2d');
+        this.ctx = this.canvas.getContext('2d');
+
+        this.draw = new Draw(this);
     }
 
-
-    rectangle([x, y, width, height]:number[]){
-        this.ctx.fillRect(x, y, width, height);
-    }
-    drawBackground(){
+    reset(){
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.save();
         this.ctx.fillStyle = this.background;
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.restore();
-    }
-    clear(){
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
 
@@ -39,6 +38,10 @@ export default class Canvas{
     setY(y:number){
         this.ctx.translate(0, this.y - y);
         this.x = y;
+    }
+
+    setBackground(bg:string){
+        this.background = bg;
     }
 
     getX(){
@@ -54,11 +57,5 @@ export default class Canvas{
     }
     get height():number {
         return this.canvas.height;
-    }
-    get ctx():CanvasRenderingContext2D{
-        return this._ctx;
-    }
-    get canvas():HTMLCanvasElement{
-        return this._canvas;
     }
 }

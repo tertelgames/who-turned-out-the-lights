@@ -102,7 +102,7 @@ export default class BoxCollider {
 
     getCollisions() {
         return Object.keys(this.collisions).map((key:string) => {
-            return this.collisions[key];
+            return this.collisions[Number(key)];
         });
     }
 

@@ -1,6 +1,9 @@
 import Box from './Box';
 import BoxCollider from './BoxCollider';
+import Canvas from './Canvas';
+import Game from './Game';
 import Sprite from './Sprite';
+import Vector from './Vector';
 
 
 type Options = {
@@ -17,8 +20,10 @@ export default class Entity {
 
     readonly id:number;
     readonly boxCollider:BoxCollider;
+    readonly type:'static'|'dynamic'|'kinematic';
 
 
+    public velocity:Vector = new Vector(0, 0);
     public bounds:Box;
     public sprite:Sprite;
 
@@ -28,17 +33,28 @@ export default class Entity {
         entities[this.id] = this;
 
         this.bounds = new Box(x, y, w, h);
+
+        this.type = options.type || 'static';
         this.sprite = options.sprite || null;
-        this.boxCollider = new BoxCollider(this);
+        
+        if (this.type != 'static') {
+            this.boxCollider = new BoxCollider(this);
+        }
     }
 
 
     update() {
-
+        this.bounds.x += this.velocity.x;
+        this.bounds.y += this.velocity.y;
     }
 
-    render() {
+    render(canvas:Canvas) {
+        canvas.draw.rectangle(...this.bounds.toArray());
+    }
 
+
+    delete() {
+        delete entities[this.id];
     }
 
 
@@ -47,9 +63,9 @@ export default class Entity {
             entity.update();
         });
     }
-    static Render() {
+    static Render(canvas:Canvas) {
         Entity.List.forEach((entity:Entity) => {
-            entity.render();
+            entity.render(canvas);
         });
     }
 
@@ -60,7 +76,7 @@ export default class Entity {
 
     static get List():Entity[] {
         return Object.keys(entities).map((key:string) => {
-            return entities[key];
+            return entities[Number(key)];
         });
     }
 }
